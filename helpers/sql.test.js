@@ -15,13 +15,26 @@ describe("sqlForPartialUpdate", function () {
     `);
   });
 
-  test("replaces column name with values from propertyToColumnNameMap", function(){
-    const results = sqlForPartialUpdate({ foo: 1 });
-    expect(results).toEqual({"setCols": "\"foo\"=$1", "values": [1]})
+  test("replaces column name with values from propertyToColumnNameMap and includes unmapped property as column names", function () {
+    const results = sqlForPartialUpdate({ foo: 1, bar: 2 }, { foo: "F_oo_O" });
+    expect(results).toMatchInlineSnapshot(`
+      Object {
+        "setCols": "\\"F_oo_O\\"=$1, \\"bar\\"=$2",
+        "values": Array [
+          1,
+          2,
+        ],
+      }
+    `);
   });
 
-  test("throws an error if object is empty", function(){
-    const results = sqlForPartialUpdate();
-    expect(results).toThrowError(BadRequestError)
-  })
+  test("throws an error if object is empty", function () {
+    expect.assertions(2);
+    try {
+      sqlForPartialUpdate({});
+    } catch (error) {
+      expect(error).toBeInstanceOf(BadRequestError);
+      expect(error).toHaveProperty("message", "No data");
+    }
+  });
 });
