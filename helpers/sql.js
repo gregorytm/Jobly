@@ -25,13 +25,24 @@ function sqlForPartialUpdate(dataToUpdate, propertyToColumnNameMap = {}) {
   };
 }
 
+//my attempt
 function createCompanyFilterSql(filters) {
   //todo:make func past tests
-  return {
-    whereClause:
-      "WHERE num_employees >= $1 AND num_employees <= $2 AND name ILIKE '%' || $3 || '%'",
-    values: [800, 900, "dav"],
-  };
+  const name = filters;
+  console.log(name);
+  if (name === undefined) {
+    return "";
+  }
 }
+
+//starter func code
+// function createCompanyFilterSql(filters) {
+//   //todo:make func past tests
+//   return {
+//     whereClause:
+//       "WHERE num_employees >= $1 AND num_employees <= $2 AND name ILIKE '%' || $3 || '%'",
+//     values: [800, 900, "dav"],
+//   };
+// }
 
 module.exports = { sqlForPartialUpdate, createCompanyFilterSql };
