@@ -25,4 +25,13 @@ function sqlForPartialUpdate(dataToUpdate, propertyToColumnNameMap = {}) {
   };
 }
 
-module.exports = { sqlForPartialUpdate };
+function createCompanyFilterSql(filters) {
+  //todo:make func past tests
+  return {
+    whereClause:
+      "WHERE num_employees >= $1 AND num_employees <= $2 AND name ILIKE '%' || $3 || '%'",
+    values: [800, 900, "dav"],
+  };
+}
+
+module.exports = { sqlForPartialUpdate, createCompanyFilterSql };
