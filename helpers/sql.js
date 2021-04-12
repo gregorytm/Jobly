@@ -25,24 +25,57 @@ function sqlForPartialUpdate(dataToUpdate, propertyToColumnNameMap = {}) {
   };
 }
 
-//my attempt
 function createCompanyFilterSql(filters) {
   //todo:make func past tests
-  const name = filters;
-  console.log(name);
-  if (name === undefined) {
-    return "";
+  const name = filters.name;
+  const min = filters.minEmployees;
+  const max = filters.maxEmployees;
+  let whereClauses = [];
+  let values = [];
+
+  if (min !== undefined) {
+    whereClauses.push(`num_employees >= $${values.length + 1}`);
+    values.push(min);
   }
+  if (max !== undefined) {
+    whereClauses.push(`num_employees <= $${values.length + 1}`);
+    values.push(max);
+  }
+  if (name !== undefined) {
+    whereClauses.push(`name ILIKE '%' || $${values.length + 1} || '%'`);
+    values.push(name);
+  }
+  return {
+    whereClause:
+      whereClauses.length === 0 ? "" : `WHERE ${whereClauses.join(" AND ")}`,
+    values,
+  };
 }
 
-//starter func code
-// function createCompanyFilterSql(filters) {
-//   //todo:make func past tests
-//   return {
-//     whereClause:
-//       "WHERE num_employees >= $1 AND num_employees <= $2 AND name ILIKE '%' || $3 || '%'",
-//     values: [800, 900, "dav"],
-//   };
-// }
+function createJobsFilterSql({ title, minSalary, hasEquity }) {
+  let whereClauses = [];
+  let values = [];
 
-module.exports = { sqlForPartialUpdate, createCompanyFilterSql };
+  if (minSalary !== undefined) {
+    whereClauses.push(`salary >= $${values.length + 1}`);
+    values.push(minSalary);
+  }
+  if (hasEquity === true) {
+    whereClauses.push(`equity > 0`);
+  }
+  if (title !== undefined) {
+    whereClauses.push(`title ILIKE '%' || $${values.length + 1} || '%'`);
+    values.push(title);
+  }
+  return {
+    whereClause:
+      whereClauses.length === 0 ? "" : `WHERE ${whereClauses.join(" AND ")}`,
+    values,
+  };
+}
+
+module.exports = {
+  sqlForPartialUpdate,
+  createCompanyFilterSql,
+  createJobsFilterSql,
+};
