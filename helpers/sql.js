@@ -25,7 +25,7 @@ function sqlForPartialUpdate(dataToUpdate, propertyToColumnNameMap = {}) {
   };
 }
 
-function createCompanyFilterSql(filters) {
+function createCompanyFilterSql(filters = {}) {
   //todo:make func past tests
   const name = filters.name;
   const min = filters.minEmployees;

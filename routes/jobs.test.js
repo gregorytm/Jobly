@@ -81,7 +81,7 @@ describe("GET /jobs", function () {
       ],
     });
   });
-  test.only("return results for 'dev' and 'equity'", async function () {
+  test("return results for 'dev' and 'equity'", async function () {
     const resp = await request(app).get("/jobs/?title=dev&hasEquity=true");
     expect(resp.body).toEqual({
       jobs: [

@@ -9,6 +9,7 @@ const { ensureLoggedIn, isAdmin } = require("../middleware/auth");
 const { BadRequestError } = require("../expressError");
 const Job = require("../models/jobs");
 const jobNewSchema = require("../schemas/jobNew.json");
+const jobUpdateSchema = require("../schemas/JobUpdate.json");
 
 const router = express.Router();
 
@@ -65,6 +66,27 @@ router.post("/:companyHandle", isAdmin, async function (req, res, next) {
     return res.status(201).json({ job });
   } catch (error) {
     return next(error);
+  }
+});
+
+/**PATCH /:companyHandle  => {title, salary, equity, companyHandle
+ *
+ * edit a exiting post in the db
+ *
+ */
+
+router.patch("/:companyHandle", isAdmin, async function (req, res, next) {
+  try {
+    const validator = jsonschema.validate(req.body, jobUpdateSchema);
+    if (!validator.valid) {
+      const errs = validator.errors.map((e) => e.stack);
+      throw new BadRequestError(errs);
+    }
+
+    const job = await Job.update(req.params.handle, req.body);
+    return res.json({ job });
+  } catch (err) {
+    return next(err);
   }
 });
 
